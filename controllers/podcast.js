@@ -46,6 +46,12 @@ export const getPodcasts = catchAsyncErrors(async (req, res) => {
 });
 export const getPodcast = catchAsyncErrors(async (req, res) => {
     const { id } = req.params;
+    if (!id) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Please provide podcast id",
+        });
+    }
     const podcast = await Podcast.findById(id);
     if (!podcast) {
         return sendResponse(res, {

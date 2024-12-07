@@ -58,7 +58,7 @@ export const adminLogin = catchAsyncErrors(async (req, res) => {
     });
     return sendResponse(res, {
         status: 200,
-        message: `Welcome ${admin.full_name} to mail matrix!`,
+        message: `Welcome ${admin.full_name}!`,
         data: {
             name: admin.full_name,
             email: admin.email,
