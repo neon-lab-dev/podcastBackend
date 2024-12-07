@@ -88,6 +88,12 @@ export const handleEmailLogin = catchAsyncErrors(async (req, res) => {
 
 export const handleGoogleSignin = catchAsyncErrors(async (req, res) => {
     const { code } = req.body;
+    if (!code) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Invalid code",
+        });
+    }
     const { tokens } = await oauth2Client.getToken(code);
 
     oauth2Client.setCredentials(tokens);

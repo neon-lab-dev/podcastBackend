@@ -27,7 +27,9 @@ if (ENV_CONFIG.NODE_ENV === "development") {
 
 app.get("/", (_, res) => {
     res.send({
-        message: "Welcome to the API",
+        message: "Welcome to the Podcast API",
+        status: 200,
+        health: "ok",
     });
 });
 
