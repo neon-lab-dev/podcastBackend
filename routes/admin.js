@@ -2,7 +2,7 @@ import { Router } from "express";
 import { adminLogin, adminLogout, adminMe, createAdmin, getAllUsers } from "../controllers/admin.js";
 import { verifyTokenAdmin } from "../utils/token-manager.js";
 const adminRouter = Router();
-adminRouter.post("/admin/register", verifyTokenAdmin, createAdmin);
+adminRouter.post("/admin/register", createAdmin);
 adminRouter.post("/admin/login", adminLogin);
 adminRouter.post("/admin/logout", adminLogout);
 adminRouter.get("/admin/me", verifyTokenAdmin, adminMe);
