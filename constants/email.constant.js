@@ -19,7 +19,7 @@ const SIGNUP_EMAIL = {
                 <ul style="list-style-type: none; padding-left: 0;">
                     <li style="margin-bottom: 10px; font-weight: 600;">✅ Complete your profile</li>
                     <li style="margin-bottom: 10px; font-weight: 600;">🔍 Explore our features</li>
-                    <li style="margin-bottom: 10px; font-weight: 600;">🤝 Connect with other users</li>
+                    
                 </ul>
                 <p style="font-size: 16px; font-weight: 400;">If you have any questions or need assistance, please don't hesitate to reach out to our support team. We're here to help! 💁‍♂️</p>
                 <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
