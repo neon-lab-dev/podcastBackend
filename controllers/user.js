@@ -1,12 +1,11 @@
-import { USER_AUTH_TOKEN } from "../constants/cookies.constant.js";
 import { sendResponse } from "../middlewares/sendResponse.js";
 import userModel from "../models/user.model.js";
-import { registerCookies } from "../utils/cookies.js";
 import oauth2Client from "../config/oauth.js";
 import userCredentials from "../models/user-credentials.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import { ADMIN_NOTIFICATION, SIGNUP_EMAIL } from "../constants/email.constant.js";
 import { sendEmailToAllAdmins, sendWelcomeEmail } from "../utils/sendMail.js";
+import { createToken } from "../utils/token-manager.js";
 
 
 
@@ -33,10 +32,13 @@ export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
     await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(newUser));
     const userWithoutPassword = newUser.toObject();
     delete userWithoutPassword.password
+
+    const token = createToken({ id: newUser._id, email: newUser.email }, "7d");
     return sendResponse(res, {
         status: 201,
         message: `Thank you for registering, ${newUser.name}`,
         data: userWithoutPassword,
+        token,
     });
 });
 
@@ -68,19 +70,17 @@ export const handleEmailLogin = catchAsyncErrors(async (req, res) => {
             message: "Invalid Credentials",
         });
     }
-    registerCookies(res, USER_AUTH_TOKEN, {
-        id: user._id.toString(),
+    const token = createToken({ id: user._id, email: user.email }, "7d");
 
-        email: user.email,
-    });
     return sendResponse(res, {
         status: 200,
-        message: `Welcome ${user.given_name} to mail matrix!`,
+        message: `Welcome ${user.name} !`,
         data: {
             name: user.name,
             email: user.email,
             image: user.image,
             id: user._id,
+            token,
         },
     });
 });
@@ -154,10 +154,7 @@ export const handleGoogleSignin = catchAsyncErrors(async (req, res) => {
         await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(userDoc));
 
     }
-    registerCookies(res, {
-        _id: userDoc._id.toString(),
-        email: userDoc.email,
-    });
+    const token = createToken({ id: userDoc._id, email: userDoc.email }, "7d");
     return sendResponse(res, {
         status: 200,
         message: `Welcome back ${userDoc.name} `,
@@ -167,11 +164,13 @@ export const handleGoogleSignin = catchAsyncErrors(async (req, res) => {
             image: userDoc.image,
             _id: userDoc._id,
         },
+        token,
     });
 });
 
 export const userProfile = catchAsyncErrors(async (req, res) => {
-    const id = res.locals.jwtData.userId.id;
+    const id = res.locals.jwtData.id;
+
     const user = await userModel
         .findById(id)
         .select("-password")

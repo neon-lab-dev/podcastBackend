@@ -1,9 +1,8 @@
-import { ADMIN_AUTH_TOKEN } from "../constants/cookies.constant.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import { sendResponse } from "../middlewares/sendResponse.js";
 import adminModel from "../models/admin.model.js";
 import userModel from "../models/user.model.js";
-import { registerCookies, clearCookies } from "../utils/cookies.js";
+import { createToken } from "../utils/token-manager.js";
 
 export const createAdmin = catchAsyncErrors(async (req, res) => {
     const { email, password, full_name } = req.body;
@@ -28,10 +27,12 @@ export const createAdmin = catchAsyncErrors(async (req, res) => {
     await admin.save();
     const adminWithoutPassword = admin.toObject();
     delete adminWithoutPassword.password;
+    const token = createToken({ id: admin._id, email: admin.email }, "7d");
     return sendResponse(res, {
         status: 201,
         message: `Welcome ${admin.full_name}, You are now registered as an Admin`,
         data: adminWithoutPassword,
+        token,
     });
 }
 );
@@ -52,10 +53,7 @@ export const adminLogin = catchAsyncErrors(async (req, res) => {
         });
     }
 
-    registerCookies(res, ADMIN_AUTH_TOKEN, {
-        id: admin._id.toString(),
-        email: admin.email,
-    });
+    const token = createToken({ id: admin._id, email: admin.email }, "7d");
     return sendResponse(res, {
         status: 200,
         message: `Welcome ${admin.full_name}!`,
@@ -64,19 +62,20 @@ export const adminLogin = catchAsyncErrors(async (req, res) => {
             email: admin.email,
             id: admin._id,
         },
+        token,
     });
 })
 
-export const adminLogout = catchAsyncErrors(async (req, res) => {
-    clearCookies(res, ADMIN_AUTH_TOKEN);
-    return sendResponse(res, {
-        status: 200,
-        message: "Admin logged out successfully",
-    });
-});
+// export const adminLogout = catchAsyncErrors(async (req, res) => {
+//     clearCookies(res, ADMIN_AUTH_TOKEN);
+//     return sendResponse(res, {
+//         status: 200,
+//         message: "Admin logged out successfully",
+//     });
+// });
 
 export const adminMe = catchAsyncErrors(async (req, res) => {
-    const id = res.locals.jwtData.userId.id;
+    const id = res.locals.jwtData.id;;
 
     const admin = await adminModel.findById(id);
     return sendResponse(res, {
