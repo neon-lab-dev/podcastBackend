@@ -6,7 +6,7 @@ import { verifyToken, verifyTokenAdmin } from "../utils/token-manager.js";
 const podcastRouter = Router();
 
 podcastRouter.post("/create", podcastUpload, verifyTokenAdmin, createPodcast);
-podcastRouter.get("/", verifyToken, getPodcasts);
+podcastRouter.get("/", getPodcasts);
 podcastRouter.get("/:id", getPodcast);
 podcastRouter.put("/:id", podcastUpload, verifyTokenAdmin, updatePodcast);
 podcastRouter.delete("/:id", verifyTokenAdmin, deletePodcast);

@@ -28,8 +28,9 @@ export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
         });
     }
     const newUser = await userModel.create({ name, email, password });
-    await sendWelcomeEmail(SIGNUP_EMAIL.subject, SIGNUP_EMAIL.html(newUser.name), newUser);
-    await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(newUser));
+    // ! Uncomment the below lines to send welcome email to the user and notification email to all admins
+    // await sendWelcomeEmail(SIGNUP_EMAIL.subject, SIGNUP_EMAIL.html(newUser.name), newUser);
+    // await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(newUser)); 
     const userWithoutPassword = newUser.toObject();
     delete userWithoutPassword.password
 
@@ -148,12 +149,12 @@ export const handleGoogleSignin = catchAsyncErrors(async (req, res) => {
 
 
 
+    //! Uncomment the below lines to send welcome email to the user and notification email to all admins
+    // if (!userExists) {
+    //     await sendWelcomeEmail(SIGNUP_EMAIL.subject, SIGNUP_EMAIL.html(userDoc.name), userDoc);
+    //     await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(userDoc));
 
-    if (!userExists) {
-        await sendWelcomeEmail(SIGNUP_EMAIL.subject, SIGNUP_EMAIL.html(userDoc.name), userDoc);
-        await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(userDoc));
-
-    }
+    // }
     const token = createToken({ id: userDoc._id, email: userDoc.email }, "7d");
     return sendResponse(res, {
         status: 200,
