@@ -11,7 +11,7 @@ import { createToken } from "../utils/token-manager.js";
 
 export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
 
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!name || !email || !password) {
         return sendResponse(res, {
@@ -182,6 +182,22 @@ export const userProfile = catchAsyncErrors(async (req, res) => {
             message: "User not found",
         });
     }
+    return sendResponse(res, {
+        status: 200,
+        data: user,
+    });
+});
+
+export const updateUserProfile = catchAsyncErrors(async (req, res) => {
+    const { phone, name } = req.body;
+    if (!phone || !name) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Please fill all fields",
+        });
+    }
+    const id = res.locals.jwtData.id;
+    const user = await userModel.findByIdAndUpdate(id, { phone, name }, { new: true });
     return sendResponse(res, {
         status: 200,
         data: user,

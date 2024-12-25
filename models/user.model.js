@@ -31,6 +31,9 @@ const userSchema = new Schema(
             minLength: [8, "Password should be greater than 8 characters"],
             select: false,
         },
+        phone: {
+            type: String,
+        },
         image: {
             type: String, // Google profile image, or user-uploaded image for email users
         },

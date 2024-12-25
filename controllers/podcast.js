@@ -141,3 +141,27 @@ export const deletePodcast = catchAsyncErrors(async (req, res) => {
         message: "Podcast deleted successfully",
     });
 });
+
+export const getPodcastByCategory = catchAsyncErrors(async (req, res) => {
+    const { category } = req.params;
+
+    if (!category) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Please provide category",
+        });
+    }
+    const podcasts = await Podcast.find({ category });
+
+    if (podcasts.length === 0) {
+        return sendResponse(res, {
+            status: 404,
+            message: "No podcasts found in this category",
+        });
+    }
+
+    return sendResponse(res, {
+        status: 200,
+        data: podcasts,
+    });
+});
