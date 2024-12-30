@@ -13,7 +13,7 @@ export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
 
     const { email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!email || !password) {
         return sendResponse(res, {
             status: 400,
             message: "Please fill all fields",
@@ -27,7 +27,7 @@ export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
             message: "User already exists",
         });
     }
-    const newUser = await userModel.create({ name, email, password });
+    const newUser = await userModel.create({ email, password });
     // ! Uncomment the below lines to send welcome email to the user and notification email to all admins
     // await sendWelcomeEmail(SIGNUP_EMAIL.subject, SIGNUP_EMAIL.html(newUser.name), newUser);
     // await sendEmailToAllAdmins(ADMIN_NOTIFICATION.subject, ADMIN_NOTIFICATION.html(newUser)); 
@@ -37,7 +37,7 @@ export const handleEmailRegister = catchAsyncErrors(async (req, res) => {
     const token = createToken({ id: newUser._id, email: newUser.email }, "7d");
     return sendResponse(res, {
         status: 201,
-        message: `Thank you for registering, ${newUser.name}`,
+        message: `Thank you for registering, ${newUser.email}`,
         data: userWithoutPassword,
         token,
     });
