@@ -203,3 +203,33 @@ export const updateUserProfile = catchAsyncErrors(async (req, res) => {
         data: user,
     });
 });
+
+export const deleteProfile = catchAsyncErrors(async (req, res) => {
+    const { id, email } = req.body;
+    if (!email) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Please provide email",
+        });
+    }
+    const user = await userModel.findByIdAndDelete(id);
+    if (!user) {
+        return sendResponse(res, {
+            status: 404,
+            message: "User not found",
+        });
+    }
+    if (user.email !== email) {
+        return sendResponse(res, {
+            status: 401,
+            message: "Invalid email",
+        });
+    }
+    await userCredentials.findOneAndDelete({ userId: id });
+    await userModel.deleteOne({ _id: id });
+
+    return sendResponse(res, {
+        status: 200,
+        message: "User deleted successfully",
+    });
+});
