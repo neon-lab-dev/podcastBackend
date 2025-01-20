@@ -11,5 +11,5 @@ userRouter.post("/user/login", handleEmailLogin);
 userRouter.post("/user/google", handleGoogleSignin);
 userRouter.get("/user/me", verifyToken, userProfile);
 userRouter.put("/user/update", verifyToken, updateUserProfile);
-userRouter.delete("/user/delete", verifyToken, deleteProfile);
+userRouter.delete("/user/delete", deleteProfile);
 export default userRouter;
