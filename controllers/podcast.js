@@ -165,3 +165,32 @@ export const getPodcastByCategory = catchAsyncErrors(async (req, res) => {
         data: podcasts,
     });
 });
+
+export const searchPodcastByTitle = catchAsyncErrors(async (req, res) => {
+    const { title } = req.params;
+    if (!title) {
+        return sendResponse(res, {
+            status: 400,
+            message: "Please provide title",
+        });
+    }
+
+    const podcasts = await Podcast.find({
+        name: {
+            $regex: title,
+            $options: "i",
+        },
+    });
+
+    if (podcasts.length === 0) {
+        return sendResponse(res, {
+            status: 404,
+            message: "No podcasts found with this title",
+        });
+    }
+
+    return sendResponse(res, {
+        status: 200,
+        data: podcasts,
+    });
+});
